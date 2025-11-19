@@ -26,6 +26,8 @@ async function inspect() {
       console.log(`  teamId: ${t.teamId}`);
       console.log(`  teamName: ${t.teamName}`);
       console.log(`  members (${Array.isArray(t.members) ? t.members.length : 'n/a'}): ${JSON.stringify(t.members)}`);
+      console.log(`  contactNumber ${t.contactNumber}`);
+      console.log(`  email: ${t.email}`);
       console.log(`  raw doc keys: ${Object.keys(t).join(', ')}`);
     });
 

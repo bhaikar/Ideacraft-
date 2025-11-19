@@ -45,6 +45,7 @@ router.get("/all-teams", async (req, res) => {
         teamName: team.teamName,
         college: team.college,
         email: team.email,
+        contactNumber: team.contactNumber,
         members: team.members || [],
         isCheckedIn: team.isCheckedIn,
         checkInTime: team.checkInTime || null,

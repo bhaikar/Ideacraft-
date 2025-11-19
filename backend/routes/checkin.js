@@ -43,6 +43,9 @@ router.post("/", async (req, res) => {
           team: {
             teamId: existing.teamId,
             teamName: existing.teamName,
+            teamCollege: existing.college,
+            contactNumber: existing.contactNumber,
+            teamEmail: existing.email,
             checkInTime: existing.checkInTime,
           },
         });
@@ -75,6 +78,8 @@ router.post("/", async (req, res) => {
         teamName: updatedTeam.teamName,
         college: updatedTeam.college,
         members: updatedTeam.members || [],
+        contactNumber: updatedTeam.contactNumber,
+        email: updatedTeam.email,
         checkInTime: updatedTeam.checkInTime,
       },
     });

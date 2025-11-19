@@ -1,7 +1,7 @@
 // API Base URL - Automatically detect environment (local or deployed)
 const API_BASE_URL = window.location.hostname === "localhost"
     ? "http://localhost:3000/api"
-    : "/api";
+    : "https://ideacraft.onrender.com/api";
 
 // DOM Elements
 const checkInForm = document.getElementById('checkInForm');
@@ -186,6 +186,10 @@ document.addEventListener('keypress', (e) => {
 document.querySelectorAll('.stat-item').forEach(item => {
     item.style.transition = 'transform 0.2s ease';
 });
+
+
+
+
 
 
 // --- Three.js & H1 Animation Logic ---

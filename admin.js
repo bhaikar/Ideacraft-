@@ -1,5 +1,7 @@
-// API Base URL - Update this with your backend URL
-const API_BASE_URL = 'https://dev-hack.onrender.com/api';
+// API Base URL - Automatically detect environment (local or deployed)
+const API_BASE_URL = window.location.hostname === "localhost"
+    ? "http://localhost:3000/api"
+    : "https://ideacraft.onrender.com/api";
 
 let allTeams = [];
 
@@ -86,6 +88,8 @@ function renderTeams(teams) {
             <td>${team.teamId}</td>
             <td>${team.teamName}</td>
             <td class="members-cell">${membersList}</td>
+            <td>${team.contactNumber}</td>
+            <td>${team.email}</td>
             <td>
                 <span class="status-badge ${checkedIn ? 'status-checked-in' : 'status-pending'}">
                     ${checkedIn ? '✓ Checked In' : '⏳ Pending'}
