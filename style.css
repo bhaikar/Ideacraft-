@@ -59,7 +59,6 @@ body {
 }
 
 @keyframes pulse {
-
     0%,
     100% {
         opacity: 0.5;
@@ -135,6 +134,7 @@ header {
     margin-top: 0.25rem;
 }
 
+/* Nav Button with Three.js */
 .nav-btn {
     display: flex;
     width: 170px;
@@ -147,7 +147,32 @@ header {
     border: 2px solid rgba(220, 38, 38, 0.3);
     cursor: pointer;
     transition: all 0.3s ease;
-    overflow: visible;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+.nav-btn-canvas-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    border-radius: 40px;
+    overflow: hidden;
+}
+
+.nav-btn-canvas {
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.nav-btn:hover .nav-btn-canvas {
+    opacity: 0.5;
 }
 
 .nav-btn:hover {
@@ -166,6 +191,8 @@ header {
     border-radius: 50%;
     border: 3px solid rgba(0, 0, 0, 0.8);
     transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
 }
 
 .nav-btn:hover .icon-container {
@@ -185,10 +212,14 @@ header {
     font-weight: 600;
     text-transform: uppercase;
     padding: 0.8rem 0;
+    position: relative;
+    z-index: 2;
 }
 
 .nav-btn .icon-container svg {
     transition-duration: 1.5s;
+    position: relative;
+    z-index: 3;
 }
 
 .nav-btn:hover .icon-container svg {
@@ -201,7 +232,6 @@ header {
         opacity: 0;
         margin-left: 0px;
     }
-
     100% {
         opacity: 1;
         margin-left: 10px;
@@ -285,7 +315,6 @@ header {
 }
 
 @keyframes countPulse {
-
     0%,
     100% {
         transform: scale(1);
@@ -475,6 +504,7 @@ input:focus+.input-icon {
     opacity: 1;
 }
 
+/* Check In Button with Three.js */
 .btn {
     --main-size: 1.2em;
     --color-text: #ffffff;
@@ -500,6 +530,33 @@ input:focus+.input-icon {
     transition: 1s;
     text-transform: uppercase;
     letter-spacing: 3px;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+/* Canvas container for button */
+.btn-canvas-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    border-radius: calc(var(--main-size) * 100);
+    overflow: hidden;
+}
+
+.btn-canvas {
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.btn:hover .btn-canvas {
+    opacity: 0.6;
 }
 
 .btn:active {
@@ -520,6 +577,8 @@ input:focus+.input-icon {
     display: flex;
     align-items: center;
     gap: 0.5em;
+    position: relative;
+    z-index: 2;
 }
 
 .btn:hover .btn-text {
@@ -537,6 +596,7 @@ input:focus+.input-icon {
     position: relative;
     transition: 0.5s;
     flex-shrink: 0;
+    z-index: 2;
 }
 
 .btn:hover svg {
@@ -711,6 +771,10 @@ input:focus+.input-icon {
     display: none;
 }
 
+.btn.loading svg {
+    display: none;
+}
+
 /* Footer */
 footer {
     position: relative;
@@ -846,7 +910,6 @@ section[id] {
 }
 
 @keyframes red-glow {
-
     0%,
     100% {
         /* Base glow: A sharp inner white highlight + a softer red outer glow */

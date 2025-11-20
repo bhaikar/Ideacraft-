@@ -334,3 +334,174 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(toggleLogoFade, 3000);
 
 });
+
+
+
+
+// Three.js Button Animations
+function initButtonAnimations() {
+    // Check In Button Animation
+    const checkInCanvas = document.getElementById('checkInBtnCanvas');
+    if (checkInCanvas) {
+        initButtonCanvas(checkInCanvas, '#dc2626', 'checkInBtn');
+    }
+
+    // Admin Button Animation
+    const adminCanvas = document.getElementById('adminBtnCanvas');
+    if (adminCanvas) {
+        initButtonCanvas(adminCanvas, '#dc2626', 'nav-btn');
+    }
+}
+
+function initButtonCanvas(canvas, colorHex, buttonClass) {
+    const parent = canvas.closest(`.${buttonClass}`);
+    if (!parent) return;
+
+    // Set canvas size based on parent
+    const rect = parent.getBoundingClientRect();
+    canvas.width = rect.width * 2;
+    canvas.height = rect.height * 2;
+
+    // Create Three.js scene
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, canvas.width / canvas.height, 0.1, 100);
+    camera.position.z = 8;
+
+    const renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        alpha: true,
+        antialias: true
+    });
+    renderer.setSize(canvas.width, canvas.height);
+
+    // Create particle system
+    const particleCount = 80;
+    const positions = new Float32Array(particleCount * 3);
+    const velocities = [];
+
+    for (let i = 0; i < particleCount; i++) {
+        positions[i * 3] = (Math.random() - 0.5) * 15;
+        positions[i * 3 + 1] = (Math.random() - 0.5) * 8;
+        positions[i * 3 + 2] = (Math.random() - 0.5) * 8;
+
+        velocities.push({
+            x: (Math.random() - 0.5) * 0.03,
+            y: (Math.random() - 0.5) * 0.03,
+            z: (Math.random() - 0.5) * 0.03
+        });
+    }
+
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+    // Convert hex color to RGB
+    const particleColor = new THREE.Color(colorHex);
+
+    const material = new THREE.PointsMaterial({
+        color: particleColor,
+        size: 0.2,
+        transparent: true,
+        opacity: 0.9,
+        blending: THREE.AdditiveBlending
+    });
+
+    const particles = new THREE.Points(geometry, material);
+    scene.add(particles);
+
+    // Add energy waves
+    const waveGeometry = new THREE.TorusGeometry(3, 0.05, 16, 100);
+    const waveMaterial = new THREE.MeshBasicMaterial({
+        color: particleColor,
+        transparent: true,
+        opacity: 0.4,
+        wireframe: true
+    });
+    const wave1 = new THREE.Mesh(waveGeometry, waveMaterial);
+    const wave2 = new THREE.Mesh(waveGeometry, waveMaterial.clone());
+    wave2.rotation.x = Math.PI / 2;
+    scene.add(wave1);
+    scene.add(wave2);
+
+    // Add central sphere
+    const sphereGeometry = new THREE.SphereGeometry(0.8, 16, 16);
+    const sphereMaterial = new THREE.MeshBasicMaterial({
+        color: particleColor,
+        transparent: true,
+        opacity: 0.5,
+        wireframe: true
+    });
+    const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+    scene.add(sphere);
+
+    // Animation loop
+    let isHovering = false;
+    let animationId;
+    let time = 0;
+
+    function animate() {
+        if (!isHovering) return;
+
+        animationId = requestAnimationFrame(animate);
+        time += 0.016;
+
+        // Animate particles
+        const positions = particles.geometry.attributes.position.array;
+        for (let i = 0; i < particleCount; i++) {
+            positions[i * 3] += velocities[i].x;
+            positions[i * 3 + 1] += velocities[i].y;
+            positions[i * 3 + 2] += velocities[i].z;
+
+            // Bounce particles
+            if (Math.abs(positions[i * 3]) > 7.5) velocities[i].x *= -1;
+            if (Math.abs(positions[i * 3 + 1]) > 4) velocities[i].y *= -1;
+            if (Math.abs(positions[i * 3 + 2]) > 4) velocities[i].z *= -1;
+        }
+        particles.geometry.attributes.position.needsUpdate = true;
+
+        // Rotate particles
+        particles.rotation.y += 0.008;
+        particles.rotation.x += 0.004;
+
+        // Animate waves
+        wave1.rotation.z += 0.02;
+        wave1.scale.setScalar(1 + Math.sin(time * 2) * 0.1);
+        wave2.rotation.y += 0.015;
+        wave2.scale.setScalar(1 + Math.cos(time * 2) * 0.1);
+
+        // Pulse sphere
+        sphere.rotation.y += 0.03;
+        sphere.rotation.x += 0.02;
+        const pulse = 1 + Math.sin(time * 3) * 0.15;
+        sphere.scale.setScalar(pulse);
+
+        renderer.render(scene, camera);
+    }
+
+    // Hover events
+    parent.addEventListener('mouseenter', () => {
+        isHovering = true;
+        animate();
+    });
+
+    parent.addEventListener('mouseleave', () => {
+        isHovering = false;
+        if (animationId) {
+            cancelAnimationFrame(animationId);
+        }
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        const rect = parent.getBoundingClientRect();
+        canvas.width = rect.width * 2;
+        canvas.height = rect.height * 2;
+        camera.aspect = canvas.width / canvas.height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(canvas.width, canvas.height);
+    });
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    initButtonAnimations();
+});

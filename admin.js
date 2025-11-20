@@ -63,14 +63,14 @@ function renderTeams(teams) {
     
     if (teams.length === 0) {
         tbody.innerHTML = `
-            <tr><td colspan="7" style="text-align: center; color: #888;">
+            <tr><td colspan="9" style="text-align: center; color: #888;">
                 No teams found
             </td></tr>
         `;
         return;
     }
 
-    tbody.innerHTML = teams.map((team, index) => {
+     tbody.innerHTML = teams.map((team, index) => {
         // Ensure isCheckedIn is a boolean
         const checkedIn = team.isCheckedIn === true || team.isCheckedIn === 'true';
         
@@ -82,14 +82,18 @@ function renderTeams(teams) {
             ).join('');
         }
         
+        // Contact and Email
+        const contact = team.contactNumber || '-';
+        const email = team.email || '-';
+        
         return `
         <tr>
             <td>${index + 1}</td>
             <td>${team.teamId}</td>
             <td>${team.teamName}</td>
+            <td style="font-size: 0.85rem;">${contact}</td>
+            <td style="font-size: 0.85rem; word-break: break-word; max-width: 200px;">${email}</td>
             <td class="members-cell">${membersList}</td>
-            <td>${team.contactNumber}</td>
-            <td>${team.email}</td>
             <td>
                 <span class="status-badge ${checkedIn ? 'status-checked-in' : 'status-pending'}">
                     ${checkedIn ? '✓ Checked In' : '⏳ Pending'}
@@ -360,4 +364,143 @@ document.addEventListener('DOMContentLoaded', () => {
     // Use setInterval to run the toggle function every 3000ms (3 seconds) REPEATEDLY
     setInterval(toggleLogoFade, 3000);
 
+});
+
+
+
+// Three.js Button Animations
+function initButtonAnimations() {
+    const buttonCanvases = document.querySelectorAll('.btn-canvas');
+    
+    buttonCanvases.forEach(canvas => {
+        const parent = canvas.closest('.refresh-btn, .export-btn, .nav-btn');
+        const color = canvas.dataset.color;
+        
+        // Set canvas size
+        const rect = parent.getBoundingClientRect();
+        canvas.width = rect.width * 2;
+        canvas.height = rect.height * 2;
+        
+        // Create Three.js scene for button
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, canvas.width / canvas.height, 0.1, 100);
+        camera.position.z = 5;
+        
+        const renderer = new THREE.WebGLRenderer({ 
+            canvas: canvas, 
+            alpha: true,
+            antialias: true 
+        });
+        renderer.setSize(canvas.width, canvas.height);
+        
+        // Create particles
+        const particleCount = 50;
+        const positions = new Float32Array(particleCount * 3);
+        const velocities = [];
+        
+        for (let i = 0; i < particleCount; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * 10;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 5;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 5;
+            
+            velocities.push({
+                x: (Math.random() - 0.5) * 0.02,
+                y: (Math.random() - 0.5) * 0.02,
+                z: (Math.random() - 0.5) * 0.02
+            });
+        }
+        
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        
+        // Color based on button type
+        let particleColor;
+        switch(color) {
+            case 'blue':
+                particleColor = new THREE.Color(0.23, 0.51, 0.96); // #3b82f6
+                break;
+            case 'green':
+                particleColor = new THREE.Color(0.13, 0.77, 0.37); // #22c55e
+                break;
+            case 'red':
+            default:
+                particleColor = new THREE.Color(0.86, 0.15, 0.15); // #dc2626
+                break;
+        }
+        
+        const material = new THREE.PointsMaterial({
+            color: particleColor,
+            size: 0.15,
+            transparent: true,
+            opacity: 0.8,
+            blending: THREE.AdditiveBlending
+        });
+        
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+        
+        // Add glowing sphere in center
+        const sphereGeometry = new THREE.SphereGeometry(0.5, 16, 16);
+        const sphereMaterial = new THREE.MeshBasicMaterial({
+            color: particleColor,
+            transparent: true,
+            opacity: 0.3,
+            wireframe: true
+        });
+        const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+        scene.add(sphere);
+        
+        // Animation loop
+        let isHovering = false;
+        let animationId;
+        
+        function animate() {
+            if (!isHovering) return;
+            
+            animationId = requestAnimationFrame(animate);
+            
+            // Update particle positions
+            const positions = particles.geometry.attributes.position.array;
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] += velocities[i].x;
+                positions[i * 3 + 1] += velocities[i].y;
+                positions[i * 3 + 2] += velocities[i].z;
+                
+                // Bounce particles within bounds
+                if (Math.abs(positions[i * 3]) > 5) velocities[i].x *= -1;
+                if (Math.abs(positions[i * 3 + 1]) > 2.5) velocities[i].y *= -1;
+                if (Math.abs(positions[i * 3 + 2]) > 2.5) velocities[i].z *= -1;
+            }
+            particles.geometry.attributes.position.needsUpdate = true;
+            
+            // Rotate particles and sphere
+            particles.rotation.y += 0.01;
+            particles.rotation.x += 0.005;
+            sphere.rotation.y += 0.02;
+            sphere.rotation.x += 0.01;
+            
+            renderer.render(scene, camera);
+        }
+        
+        // Hover events
+        parent.addEventListener('mouseenter', () => {
+            isHovering = true;
+            animate();
+        });
+        
+        parent.addEventListener('mouseleave', () => {
+            isHovering = false;
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+        });
+    });
+}
+
+// Call this function on page load
+document.addEventListener('DOMContentLoaded', () => {
+    // Your existing code...
+    
+    // Initialize button animations
+    initButtonAnimations();
 });

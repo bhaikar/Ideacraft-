@@ -17,30 +17,43 @@
     <div class="bg-animation"></div>
 
     <header>
-        <h1 class="logo">IDEACRAFT
-             - ADMIN</h1>
-        
-        <!-- Logo -->
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <div class="flex-1 md:w-1/3 flex justify-center">
-                    <a href="#" class="relative h-16 md:h-20 w-32">
-                        <img src="./assests/dot-logo.png" alt="Dot Logo"
-                            class="logo-bottom absolute inset-0 h-full w-full object-contain opacity-0 transition-opacity duration-1000 ease-in-out">
-                        <img src="./assests/logo.gif" alt="HACK.MCE 5.0 Logo"
-                            class="logo-top absolute inset-0 h-full w-full object-contain opacity-100 transition-opacity duration-1000 ease-in-out">
-                    </a>
-                </div>
+    <div class="header-container">
+        <!-- Left: Title -->
+        <div class="header-left">
+            <h1 class="logo">IDEACRAFT - ADMIN</h1>
+        </div>
+
+        <!-- Center: Logo -->
+        <div class="header-center">
+            <div class="logo-container">
+                <img src="./assests/logo.gif" alt="HACK.MCE 5.0 Logo" class="logo-top">
+                <img src="./assests/dot-logo.png" alt="Dot Logo" class="logo-bottom">
             </div>
         </div>
-       
-        <!-- Admin Navigation Buttons -->
+
+        <!-- Right: Buttons -->
         <div class="header-right">
-            <a href="index.html" class="nav-btn">← Registration</a>
-            <button class="refresh-btn" onclick="loadAllData()">🔄 Refresh</button>
-            <button class="export-btn" onclick="exportToExcel()">📥 Export</button>
+            <a href="index.html" class="nav-btn">
+                <div class="btn-canvas-container">
+                    <canvas class="btn-canvas" data-color="blue"></canvas>
+                </div>
+                <span class="btn-text">← Registration</span>
+            </a>
+            <button class="refresh-btn" onclick="loadAllData()">
+                <div class="btn-canvas-container">
+                    <canvas class="btn-canvas" data-color="red"></canvas>
+                </div>
+                <span class="btn-text">🔄 Refresh</span>
+            </button>
+            <button class="export-btn" onclick="exportToExcel()">
+                <div class="btn-canvas-container">
+                    <canvas class="btn-canvas" data-color="green"></canvas>
+                </div>
+                <span class="btn-text">📥 Export</span>
+            </button>
         </div>
-    </header>
+    </div>
+</header>
 
     <div class="container">
         <!-- Stats Grid -->
@@ -114,7 +127,7 @@
                     </thead>
                     <tbody id="teamsTableBody">
                         <tr>
-                            <td colspan="7" class="loading">
+                            <td colspan="9" class="loading">
                                 <div class="spinner"></div>
                                 Loading teams...
                             </td>
